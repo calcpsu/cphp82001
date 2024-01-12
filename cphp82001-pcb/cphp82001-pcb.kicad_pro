@@ -482,7 +482,7 @@
       "idf": "",
       "netlist": "",
       "specctra_dsn": "",
-      "step": "hp35battery_rev3.step",
+      "step": "cphp82001-pcb.step",
       "vrml": ""
     },
     "page_layout_descr_file": ""
