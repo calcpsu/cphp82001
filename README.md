@@ -6,6 +6,8 @@ Li-Po has the advantage of far reduced self-discharge in comparison to Ni-MH, wh
 
 Ni-MH / Ni-CD batteries are notorious for leaking. While Lithium Ion batteries are notorious for self-immolation, a well protected Li-Po battery (particularly in a low current application like this) should be able to be made very safe.
 
+![Render of calcpack PCB](https://github.com/calcpsu/cphp82001/blob/master/docs/cphp82001-pcb_render.png?raw=true)
+
 ## Features / design goals:
 - Fit into existing compartment with no modifications
 - Similar or ideally exceed capacity of standard Ni-Cd or Ni-MH 3xAA types (1200~2200mAh)
@@ -82,19 +84,21 @@ This has been inspired by the below reference projects:
 
 Addition of a series regulator is not an immediately obvious means to maximise efficiency. I've observed the HP-35 increases current consumption as voltage rises (this is most likely a result of the way the LEDs are driven with fixed-duty inductive energy, this appears as brighter leds!). Even accounting for the linear loss and Iq of the regulator circuit, total power consumption decreases as the regulator voltage decreases (down to about 3.6V, the minimum to operate the calculator reliably).
 
-A model of the discharge shows 3.6V to be the optimum for run time, including the impact of the dropout voltage on termination for Vbat.
+A model of the discharge for the HP35 shows as low as possible to be the optimum for run time, including the impact of the dropout voltage, resistive loss, and additional Iq for the regulator. Regulating up to 4.0V shows benefit compared to no regulator. To ensure reliable card reader operation in HP65/67, as the regulator is able to regulate with changing load, 3.63V is selected as sufficient (to be tested further).
 
 Essential for this is the very low dropout of the regulator chosen - if this increases to more than about 150mV, then the performanace advantage is lost!
 
-For the HP65/67, the card reader benefits from a consistent voltage applied. Ensuring this is high enough for a reliable card read and write (and allowing for a little droop during this process) means I'm picking 3.7~3.8V as a regulation voltage.
+![Graph of discharge performance model](https://github.com/calcpsu/cphp82001/blob/master/docs/dischargegraph.png?raw=true)
 
-![Graph of discharge performance model]()
+One disadvantage of the additional regulator is the added Iq when the calculator is off. This is modelled, and estimated to be 24 months (~ 2 years) shelf life for the reglated design, vs. 36 months (~3.5 years) for unregulated design. In either case, this is a significantly better self-discharge performance than NiCd or NiMH batteries (dominated by the self-discharge rate).
+
+Note the above is all based on theoretical modelling, some testing of the final design is required to confirm the practical Iq and discharge performance.
 
 ### Why not a switching regulator?
 
-In theory, replacing the series linear regulator with a switching regulator may allow use of the battery capacity right down to 3.0V, and more efficiently use the currently wasted energy of the full battery (VB+ > 3.7V) currently being dissipated by the linear reg.
+In theory, replacing the series linear regulator with a switching regulator may allow use of the battery capacity right down to 3.0V, and more efficiently use the currently wasted energy of the full battery (VB+ > 3.63V) currently being dissipated by the linear reg.
 
-Unfortunately, as the VB+ is close to Vout required, a topology able to deal with VB+ both above and below Vout is needed. The target efficiency to outperform the linear regulator would be 93.8%. Typical switching regulator arrangements are unlikely to do much better than 80% at this current level, with vastly higher Iq also (reducing the power-off battery time).\
+Unfortunately, as the VB+ is close to Vout required, a topology able to deal with VB+ both above and below Vout is needed. The target efficiency to outperform the linear regulator would be 93.8%. Typical switching regulator arrangements are unlikely to do much better than 85% at this current level, with vastly higher Iq also (reducing the power-off battery time).
 
 ## License
 
