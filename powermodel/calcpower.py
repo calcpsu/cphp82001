@@ -170,7 +170,6 @@ if __name__ == "__main__":
     # ax0
     axs[0].set_title(calc["name"] + " Capacity")
     axs[0].set_ylabel("mAh")
-    axs[0].set_xlabel("hours")
     
     axs[0].plot(df_noreg.index, df_noreg["c"], 'r-', label='no reg')
     axs[0].plot(df_reg.index, df_reg["c"], 'g-', label='reg')
@@ -179,7 +178,6 @@ if __name__ == "__main__":
     #ax 1
     axs[1].set_title(calc["name"] + " Current")
     axs[1].set_ylabel("mA")
-    axs[1].set_xlabel("hours")
 
     axs[1].plot(df_noreg.index, df_noreg["io"], 'r-', label="io, no reg")
     axs[1].plot(df_reg.index, df_reg["io"], 'g-', label="io, reg")
@@ -190,8 +188,7 @@ if __name__ == "__main__":
 
     # ax 2
     axs[2].set_title(calc["name"] + " Voltage")
-    axs[1].set_ylabel("V")
-    axs[1].set_xlabel("hours")
+    axs[2].set_ylabel("V")
 
     axs[2].plot(df_noreg.index, df_noreg["vo"], 'r-', label='vo, noreg')
     axs[2].plot(df_reg.index, df_reg["vo"], 'g-', label='vo, reg')
