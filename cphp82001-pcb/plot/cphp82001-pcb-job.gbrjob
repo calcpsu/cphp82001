@@ -3,15 +3,15 @@
     "GenerationSoftware": {
       "Vendor": "KiCad",
       "Application": "Pcbnew",
-      "Version": "7.0.8"
+      "Version": "7.0.10"
     },
-    "CreationDate": "2024-01-10T16:11:44+11:00"
+    "CreationDate": "2024-01-15T16:35:47+11:00"
   },
   "GeneralSpecs": {
     "ProjectId": {
       "Name": "cphp82001-pcb",
       "GUID": "63706870-3832-4303-9031-2d7063622e6b",
-      "Revision": "2.2"
+      "Revision": "3.1"
     },
     "Size": {
       "X": 56.1,
@@ -24,8 +24,8 @@
   "DesignRules": [
     {
       "Layers": "Outer",
-      "PadToPad": 0.0,
-      "PadToTrack": 0.0,
+      "PadToPad": 0.2,
+      "PadToTrack": 0.2,
       "TrackToTrack": 0.2,
       "MinLineWidth": 0.25,
       "TrackToRegion": 0.2,
