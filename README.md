@@ -41,7 +41,7 @@ This has been inspired by the below reference projects:
  - Regulator: [TLV75801](https://www.ti.com/lit/ds/symlink/tlv758p.pdf)
      - Ultra low dropout (~30mV)
      - 500mA current (enough for HP67 card read/write at ~400mA for a few seconds)
-     - Very low Iq for a regulator (25uA)
+     - Very low Iq for a regulator (25uA at idle, assuming Vb > Vo; only 400uA or so at full current)
  - Output protection diode: [MAX40203](https://www.analog.com/media/en/technical-documentation/data-sheets/MAX40203.pdf)
      - Low voltage drop (~40mV) ideal diode
      - Low leakage and low Iq (<0.5uA)
@@ -82,23 +82,36 @@ This has been inspired by the below reference projects:
 
 ## Notes on optimisation:
 
-Addition of a series regulator is not an immediately obvious means to maximise efficiency. I've observed the HP-35 increases current consumption as voltage rises (this is most likely a result of the way the LEDs are driven with fixed-duty inductive energy, this appears as brighter leds!). Even accounting for the linear loss and Iq of the regulator circuit, total power consumption decreases as the regulator voltage decreases (down to about 3.6V, the minimum to operate the calculator reliably).
-
-A model of the discharge for the HP35 shows as low as possible to be the optimum for run time, including the impact of the dropout voltage, resistive loss, and additional Iq for the regulator. Regulating up to 4.0V shows benefit compared to no regulator. To ensure reliable card reader operation in HP65/67, as the regulator is able to regulate with changing load, 3.63V is selected as sufficient (to be tested further).
-
-Essential for this is the very low dropout of the regulator chosen - if this increases to more than about 150mV, then the performanace advantage is lost!
-
-![Graph of discharge performance model](https://github.com/calcpsu/cphp82001/blob/master/docs/dischargegraph.png?raw=true)
-
-One disadvantage of the additional regulator is the added Iq when the calculator is off. This is modelled, and estimated to be 24 months (~ 2 years) shelf life for the reglated design, vs. 36 months (~3.5 years) for unregulated design. In either case, this is a significantly better self-discharge performance than NiCd or NiMH batteries (dominated by the self-discharge rate).
-
-Note the above is all based on theoretical modelling, some testing of the final design is required to confirm the practical Iq and discharge performance.
+Addition of a series regulator is not an immediately obvious means to maximise efficiency. I've measured the HP-35 increases current consumption as voltage rises (this is most likely a result of the way the LEDs are driven with fixed-duty inductive energy, this appears as brighter leds). Even accounting for the linear loss and Iq of the regulator circuit, total power consumption decreases as the regulator voltage decreases (down to about 3.6V, the minimum to operate the calculator reliably). The newer models (HP-45, HP-67) do the opposite - the current drops as the voltage increases, I believe there must be some kind of improved more efficient power supply arrangement. The HP-67 has a card reader with a motor; this draws around 400mA when reading/writing a card; it is necessary to ensure a sufficient buffer above the minimum/low battery voltage to ensure read/write operations work well, and ensuring a stiff power supply is beneficial for consistent operation.
 
 ### Why not a switching regulator?
 
 In theory, replacing the series linear regulator with a switching regulator may allow use of the battery capacity right down to 3.0V, and more efficiently use the currently wasted energy of the full battery (VB+ > 3.63V) currently being dissipated by the linear reg.
 
-Unfortunately, as the VB+ is close to Vout required, a topology able to deal with VB+ both above and below Vout is needed. The target efficiency to outperform the linear regulator would be 93.8%. Typical switching regulator arrangements are unlikely to do much better than 85% at this current level, with vastly higher Iq also (reducing the power-off battery time).
+I've investigated using a MIC2250 step-up regulator, which has a surprisingly low Iq (55uA, not switching), and could provide a consistent output voltage right down to the end of the battery capacity (Vb=3.0V). At the currents needed, this can be around 87% efficient. This would provide a consistent voltage right up until shutdown. While this might be good particularly for the HP-67 card reader, it has the disadvantage of skipping the calculator's built-in low battery indication - the power supply unit would completely shutdown without any warning with a low battery.
+
+### Model of 3 options
+
+I've done a simulation of the 3 options:
+
+  1. No regulator (default - calculator supplied with battery voltage via MAX40203 diode)
+  2. Linear regulator (TLV75801, set to 3.80V)
+  3. Switchmode step-up regulator (MIC2250, set to 3.80V also)
+
+For each, the model calculates the change in output voltages given the battery state, calculator and power supply current draw, and iterates until the 2000mAh battery is exhausted. The calculator load is measured from 3 sample calculators, reflecting the calculator being left on in the default display ("0." or "0.00" depending on the model), and accounts for the changing current with changing supply voltage. Results are shown below.
+
+In summary, a regulated design gains a slight advantage in run time for the HP-35, while slightly reducing run time for HP-45 and HP-67. The switchmode design is best for the current-hungry HP-67, but not by a significant amount.
+Given the linear regulator provides some additional advantages for all the calculators (including a level of overcurrent / short-circuit protection which would need to be replaced, the function of the calculator's low battery signal is retained, and a more consistent voltage for the HP-67 including reducing voltage droop during card reads), the penalty in run time (and shelf time) I think is justified and the linear regulator is the optimum solution.
+
+#### Results summary (t in hours)
+![Image of power model results](https://github.com/calcpsu/cphp82001/blob/master/powermodel/modelresults.png?raw=true)
+#### HP-35
+![Image of power model results](https://github.com/calcpsu/cphp82001/blob/master/powermodel/results_hp35.png?raw=true)
+#### HP-45
+![Image of power model results](https://github.com/calcpsu/cphp82001/blob/master/powermodel/results_hp45.png?raw=true)
+#### HP-67
+![Image of power model results](https://github.com/calcpsu/cphp82001/blob/master/powermodel/results_hp67.png?raw=true)
+
 
 ## License
 
