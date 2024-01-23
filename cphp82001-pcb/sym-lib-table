@@ -1,0 +1,5 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "amphenol_10118193")(type "KiCad")(uri "${KIPRJMOD}/lib/10118193-0001LF.kicad_sym")(options "")(descr ""))
+  (lib (name "amphenol_10118194")(type "KiCad")(uri "${KIPRJMOD}/lib/10118194-0001LF.kicad_sym")(options "")(descr ""))
+)
