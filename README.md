@@ -54,7 +54,7 @@ This has been inspired by the below reference projects:
      - Input via pads does not require OVP - it can tolerate the required 22v/100mA required condition.
 
 ## Function Description
-![Block diagram of battery](https://github.com/calcpsu/cphp82001/blob/master/docs/blockdiagram.png?raw=true)
+![Block diagram of battery](https://github.com/calcpsu/cphp82001/blob/master/docs/schematic.png?raw=true)
 ### Discharging, calculator on:
  - Charge controller is powered down (VCC < VBAT)
  - B+ supplies regulator, which regulates to 3.8V
