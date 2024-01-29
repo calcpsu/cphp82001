@@ -45,44 +45,48 @@ This has been inspired by the below reference projects:
  - Output protection diode: [MAX40203](https://www.analog.com/media/en/technical-documentation/data-sheets/MAX40203.pdf)
      - Low voltage drop (~40mV) ideal diode
      - Low leakage and low Iq (<0.5uA)
- - Undervoltage protection: [TPS3808](https://www.ti.com/lit/ds/symlink/tps3808.pdf)
-     - Set level with a voltage divider - e.g. ~3.0V for better battery health
-     - Output used to shutdown regulator and output diode, disconnecting load and vastly reducing Iq
+ - Undervoltage protection: [APX809S-31SA](https://www.diodes.com/assets/Datasheets/APX809S-810S.pdf)
+     - Pre-set with 3.1V threshold
+     - Output used to shutdown regulator, shutting off load and vastly reducing Iq
      - Actual protective disconnection of battery done at ~2.5V by battery pack protection circuit (typically DW01A/FS8205)
- - Input overvoltage protection: [NCP360SNT]()
+ - Input overvoltage protection: [NCP360SNT](https://www.onsemi.com/pdf/datasheet/ncp360-d.pdf)
      - Cuts off USB input for overvoltage condition (note that 2x rated voltage is required by compliance test standard EN38.3 T.7, required for transport of lipo batteries in USA/EU).
+     - Input via pads does not require OVP - it can tolerate the required 22v/100mA required condition.
 
 ## Function Description
 ![Block diagram of battery](https://github.com/calcpsu/cphp82001/blob/master/docs/blockdiagram.png?raw=true)
 ### Discharging, calculator on:
  - Charge controller is powered down (VCC < VBAT)
- - B+ supplies regulator, which regulates to 3.70V
+ - B+ supplies regulator, which regulates to 3.8V
  - Output delivered to calculator via ideal diode
- - Up to 16h run time estimated
+ - Vout at 3.8V is below threshold for U3 (4.4V), Q2 is off and VCC is 0V (charging IC shutdown completely)
 ### Charging, USB:
- - VBUS at Q1 G pulls prog down to 5k (250mA)
- - VBUS supplies VCC via D1
- - Charge controller charges battery at full 0.2C current
- - Physically not possible to do inside the calculator, can assume HP input disconnected
+ - VBUS supplies VCC via U6 and D1
+ - Presence of VBUS pulls prog down via Q1, charge controller now charges battery at higher current (0.2C target)
+ - Physically not possible to do inside the calculator, can assume calculator is not connected during charging.
+   - Although, body diode of Q2 and U3 would enable effective load sharing in this case, with output at about 4V (still well within acceptable limits for the calculator). This could be used for a future alternative in-system charging connection (e.g. a modified charging circuit, wireless charging, etc.)
 ### Charging, HP charger:
- - VCC supplied via D5, from HP 50mA CC sppply. Voltage limited by D2 (although BQ21040 will tolerate up to 30V, want it to stay below 6.6V to prevent OVP activation).
- - Q1 off. Charge controller prog resistor charges at ~45mA
- - Ideal diode reverse biased (off).
- - HP35/45/55 calculators do not draw current when on - supplied separately by HP AC adapter.
- - HP65/67 with card reader: card reader may draw from battery supply. In this case, the CC supply voltage will drop until ideal diode is activated, and card reader is powered from regulator (3.7V). This will result in VCC < Vbat for a while, resetting the charge controller and beginning a new recharge cycle. As the AC adapter is not sufficient to run the card reader, this is the least worst outcome available.
+ - HP charger supplies 50mA constant current, up to 16V (!!). With the original NiCads, these acted as a voltage clamp (float charge about 1.43V/cell = 4.3V) - we need to replace this function.
+    - With no charging current, voltage Vout rises until U3 switches off.
+    - Will continue to rise until clamped by D2 (this should be low enough to protect HP65/67 sense chip from harm with extended application, but too low will result in excessive Iq at the normal regulator voltage). 4.3V is definitely OK, 6.25V might be survivable (as this is Vss normally), but further experimentation is required. I suspect either 4.7 or 5.1V will be OK.
+    - Exceeding 4.4V for 240ms, U4 activates and connects Vout to Vcc via Q2
+    - U1 begins charge cycle, eventually delivering ~48mA to battery.
+    - On charge termination, VCC current is minimal (10's of uA), all 50mA will be running through D2 (0.28W power; using biggest one I can fit to keep temperature down)
+ - HP35/45/55 calculators do not draw current when on - supplied separately by HP AC adapter, the calculator supply is physically disconnected from the charging circuit.
+ - HP65/67 with card reader: card reader may draw from battery supply. In this case, the CC supply voltage will drop until U4 shuts off current to the charge circuit, resetting the charge cycle. When voltage drops below Vreg, U3 activates, and card reader is powered from regulator (3.78V). As the AC adapter is not sufficient to run the card reader, this is the least worst outcome available.
 ### Battery Exhausted:
  - HP35 shows low battery (decimal points) indication at V+ of 3.50V
    - This represents about 6-7% charge state of LiPo
    - User may switch off and recharge now...
  - HP35 will cease to function at ~3.25V, still draws ~75mA
    - User probably should switch off and recharge now...
- - U4 protects battery at VB+ = ~3.0V, by disabling the regulator and output diode. Iq should be ~10uA.
-   - Plenty of time to recharge at this voltage, which is good for battery health.
- - If left for a long time, VB+ may reduce to 2.5V, which should trigger battery pack protection circuit and fully disconnect the battery. Plugging in (turning on charge controller, which will do a battery detection routine and reset the protection circuit) will reset.
+ - U4 protects battery at VB+ = 3.1V, by disabling the regulator. Iq should be ~10uA.
+   - This is really the lowest you want a lipo going. Low Iq will mean it stays at this state of charge for a long time.
+ - If left for a _really_ long time, VB+ may reduce to 2.5V, which should trigger battery pack protection circuit and fully disconnect the battery. Plugging in (turning on charge controller, which will do a battery detection routine and reset the protection circuit) will reset.
 
 ## Notes on optimisation:
 
-Addition of a series regulator is not an immediately obvious means to maximise efficiency. I've measured the HP-35 increases current consumption as voltage rises (this is most likely a result of the way the LEDs are driven with fixed-duty inductive energy, this appears as brighter leds). Even accounting for the linear loss and Iq of the regulator circuit, total power consumption decreases as the regulator voltage decreases (down to about 3.6V, the minimum to operate the calculator reliably). The newer models (HP-45, HP-67) do the opposite - the current drops as the voltage increases, I believe there must be some kind of improved more efficient power supply arrangement. The HP-67 has a card reader with a motor; this draws around 400mA when reading/writing a card; it is necessary to ensure a sufficient buffer above the minimum/low battery voltage to ensure read/write operations work well, and ensuring a stiff power supply is beneficial for consistent operation.
+Addition of a series regulator is not an immediately obvious means to maximise efficiency. I've measured the HP-35 increases current consumption as voltage rises (this is most likely a result of the way the LEDs are driven with fixed-duty inductive energy, this appears as brighter leds). Even accounting for the linear loss and Iq of the regulator circuit, total power consumption decreases as the regulator voltage decreases (down to about 3.6V, the minimum to operate the calculator reliably). The newer models (HP-45, HP-67) do the opposite - the current drops as the voltage increases, I believe there must be some kind of improved more efficient power supply arrangement. The HP-67 has a card reader with a motor; this draws around 400mA when reading/writing a card. To allow for a little drop in the system, the regulator voltage needs to be a touch higher (looks like about 3.8V works consistently).
 
 ### Why not a switching regulator?
 
@@ -100,8 +104,8 @@ I've done a simulation of the 3 options:
 
 For each, the model calculates the change in output voltages given the battery state, calculator and power supply current draw, and iterates until the 2000mAh battery is exhausted. The calculator load is measured from 3 sample calculators, reflecting the calculator being left on in the default display ("0." or "0.00" depending on the model), and accounts for the changing current with changing supply voltage. Results are shown below.
 
-In summary, a regulated design gains a slight advantage in run time for the HP-35, while slightly reducing run time for HP-45 and HP-67. The switchmode design is best for the current-hungry HP-67, but not by a significant amount.
-Given the linear regulator provides some additional advantages for all the calculators (including a level of overcurrent / short-circuit protection which would need to be replaced, the function of the calculator's low battery signal is retained, and a more consistent voltage for the HP-67 including reducing voltage droop during card reads), the penalty in run time (and shelf time) I think is justified and the linear regulator is the optimum solution.
+In summary, a regulated design gains a slight advantage in run time for the HP-35, while slightly reducing run time for HP-45 and HP-67. The switchmode design is actually best for the current-hungry HP-67, but not by a significant amount, and at the cost of higher quiescent current (shortening standby time).
+Given the linear regulator provides some additional advantages for all the calculators (including a level of overcurrent / short-circuit protection which would need to be replaced, the function of the calculator's low battery signal is retained, and a constant voltage for the HP-67 card reader), the penalty in run time (and shelf time) I think is justified and the linear regulator is the optimum solution.
 
 #### Results summary (t in hours)
 ![Image of power model results](https://github.com/calcpsu/cphp82001/blob/master/powermodel/modelresults.png?raw=true)
