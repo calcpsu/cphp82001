@@ -56,10 +56,9 @@ This has been inspired by the below reference projects:
 ## Function Description
 ![Block diagram of battery](https://github.com/calcpsu/cphp82001/blob/master/docs/schematic.png?raw=true)
 ### Discharging, calculator on:
- - Charge controller is powered down (VCC < VBAT)
  - B+ supplies regulator, which regulates to 3.8V
- - Output delivered to calculator via ideal diode
- - Vout at 3.8V is below threshold for U3 (4.4V), Q2 is off and VCC is 0V (charging IC shutdown completely)
+ - Output delivered to calculator via ideal diode U3
+ - Vout at 3.8V is below threshold for U4 (4.4V), Q2 is off and VCC is 0V (charging IC shutdown completely)
 ### Charging, USB:
  - VBUS supplies VCC via U6 and D1
  - Presence of VBUS pulls prog down via Q1, charge controller now charges battery at higher current (0.2C target)
@@ -71,7 +70,7 @@ This has been inspired by the below reference projects:
     - Will continue to rise until clamped by D2 (this should be low enough to protect HP65/67 sense chip from harm with extended application, but too low will result in excessive Iq at the normal regulator voltage). 4.3V is definitely OK, 6.25V might be survivable (as this is Vss normally), but further experimentation is required. I suspect either 4.7 or 5.1V will be OK.
     - Exceeding 4.4V for 240ms, U4 activates and connects Vout to Vcc via Q2
     - U1 begins charge cycle, eventually delivering ~48mA to battery.
-    - On charge termination, VCC current is minimal (10's of uA), all 50mA will be running through D2 (0.28W power; using biggest one I can fit to keep temperature down)
+    - On charge termination, VCC current is minimal (10's of uA), all 50mA will be running through D2 (~0.25W power; using biggest one I can fit to keep temperature down)
  - HP35/45/55 calculators do not draw current when on - supplied separately by HP AC adapter, the calculator supply is physically disconnected from the charging circuit.
  - HP65/67 with card reader: card reader may draw from battery supply. In this case, the CC supply voltage will drop until U4 shuts off current to the charge circuit, resetting the charge cycle. When voltage drops below Vreg, U3 activates, and card reader is powered from regulator (3.78V). As the AC adapter is not sufficient to run the card reader, this is the least worst outcome available.
 ### Battery Exhausted:
