@@ -13,17 +13,17 @@ calculators = [{"name":"hp35","v_stop":3.5},{"name":"hp45","v_stop":3.5},{"name"
 # linear reg properties
 reg_vset = 3.80 #V
 reg_vdo = 0.030 #V
-reg_iq = 0.030 #mA (not including actual regulator; ignd is separate)
+reg_iq = 0.060 #mA (not including actual regulator; ignd is separate)
 reg_iq_shutdown = 0.019 #mA
 
 # noreg properties
-noreg_iq = 0.0245 #mA
+noreg_iq = 0.0545 #mA
 noreg_iq_shutdown = 0.019 #mA
 
 # switchmode reg properties
 sm_vset = reg_vset #V
 sm_vdiode = 0.40 #V
-sm_iq = 0.090 #mA
+sm_iq = 0.120 #mA
 sm_iq_shutdown = 0.019 #mA
 
 # commong properties
@@ -34,8 +34,36 @@ results = []
 
 if __name__ == "__main__":
 
-  print("CALCPSU MODELLER")
+  print("\nCALCPSU MODELLER")
 
+  # derive battery function
+  df_batt = pd.read_csv("battery.csv")
+  battfunc = CubicSpline(df_batt["capacity"], df_batt["voltage"], extrapolate=False)
+  #plotrange = np.linspace(start=0, stop=100,num=101)
+  #plt.plot(plotrange, battfunc(plotrange))
+  #plt.show()
+
+  # derive sm converter efficiency function
+  df_eff = pd.read_csv("efficiency_mic2250.csv")
+  efffunc = CubicSpline(df_eff["current"], df_eff["efficiency"], extrapolate=False)
+  #plotrange = np.logspace(start=-1, stop=3,num=101)
+  #plt.xscale("log")
+  #plt.plot(plotrange, efffunc(plotrange),)
+  #plt.show()
+
+  df_regignd = pd.read_csv("ignd_tlv75801.csv")
+  reg_ignd_func = interp1d(df_regignd["current_out"], df_regignd["current_gnd"])
+
+  df_regvdo = pd.read_csv("vdo_tlv75801.csv")
+  reg_vdo_func = interp1d(df_regvdo["current"], df_regvdo["voltage"])
+
+  t_max = 24.0 #hours
+  numsteps = int(t_max)*60 + 1
+  trange = np.linspace(start=0,stop=t_max,num=numsteps)
+  tstep = trange[1]-trange[0]
+
+
+  
   for calc in calculators:
 
     # derive load function
@@ -46,32 +74,6 @@ if __name__ == "__main__":
     #plt.plot(plotrange, loadfunc(plotrange))
     #plt.show()
 
-    # derive battery function
-    df_batt = pd.read_csv("battery.csv")
-    battfunc = CubicSpline(df_batt["capacity"], df_batt["voltage"], extrapolate=False)
-    #plotrange = np.linspace(start=0, stop=100,num=101)
-    #plt.plot(plotrange, battfunc(plotrange))
-    #plt.show()
-
-    # derive sm converter efficiency function
-    df_eff = pd.read_csv("efficiency_mic2250.csv")
-    efffunc = CubicSpline(df_eff["current"], df_eff["efficiency"], extrapolate=False)
-    #plotrange = np.logspace(start=-1, stop=3,num=101)
-    #plt.xscale("log")
-    #plt.plot(plotrange, efffunc(plotrange),)
-    #plt.show()
-
-    df_regignd = pd.read_csv("ignd_tlv75801.csv")
-    reg_ignd_func = interp1d(df_regignd["current_out"], df_regignd["current_gnd"])
-
-    df_regvdo = pd.read_csv("vdo_tlv75801.csv")
-    reg_vdo_func = interp1d(df_regvdo["current"], df_regvdo["voltage"])
-
-    t_max = 24.0 #hours
-    numsteps = int(t_max)*60 + 1
-
-    trange = np.linspace(start=0,stop=t_max,num=numsteps)
-    tstep = trange[1]-trange[0]
     capacity_noreg = capacity_start/100 * mah
     capacity_reg = capacity_start/100 * mah
     capacity_sm = capacity_start/100 * mah
@@ -222,4 +224,38 @@ if __name__ == "__main__":
   df_results = pd.DataFrame(results).set_index("calc")
 
   print("vreg={0}".format(sm_vset))
+  print("\nrun time (hours):")
   print(df_results)
+
+  # shelf life model
+
+  reg_iq_idle = reg_ignd_func(reg_iq) + reg_iq
+  
+  capacity_noreg = capacity_start/100 * mah
+  capacity_reg = capacity_start/100 * mah
+  capacity_sm = capacity_start/100 * mah
+
+  self_discharge = 0.05*12/365.25 # proportion per day
+  
+  useful_capacity = 0.10 * capacity_start/100 * mah
+
+  reg_shelf_days = 0
+  while capacity_reg > useful_capacity:
+    reg_shelf_days = reg_shelf_days + 1
+    capacity_reg = (capacity_reg - (reg_iq_idle*24)) * (1.0 - self_discharge)
+  
+  noreg_shelf_days = 0
+  while capacity_noreg > useful_capacity:
+    noreg_shelf_days = noreg_shelf_days + 1
+    capacity_noreg = (capacity_noreg - (noreg_iq*24)) * (1.0 - self_discharge)
+  
+  sm_shelf_days = 0
+  while capacity_sm > useful_capacity:
+    sm_shelf_days = sm_shelf_days + 1
+    capacity_sm = (capacity_sm - (sm_iq*24)) * (1.0 - self_discharge)
+  
+  print("\nstandby/shelf time:")
+  print("reg: iq={0:.2f} mA, tshelf={1:.0f} days".format(reg_iq_idle, reg_shelf_days))
+  print("noreg: iq={0:.2f} mA, tshelf={1:.0f} days".format(noreg_iq, noreg_shelf_days))
+  print("sm: iq={0:.2f} mA, tshelf={1:.0f} days".format(sm_iq, sm_shelf_days))
+  print("")
