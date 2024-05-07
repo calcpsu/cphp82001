@@ -38,10 +38,14 @@ This has been inspired by the below reference projects:
      - Clever voltage foldback mode (which will help with constant current supply charging)
      - Variable current setting
      - Safety timer (10h) and 10% termination current
- - Regulator: [TLV75801](https://www.ti.com/lit/ds/symlink/tlv758p.pdf)
+ - OPTION 1: Regulator: [TLV75801](https://www.ti.com/lit/ds/symlink/tlv758p.pdf)
      - Ultra low dropout (~30mV)
-     - 500mA current (enough for HP67 card read/write at ~400mA for a few seconds)
+     - 500mA current limited (enough for HP67 card read/write at ~400mA for a few seconds)
      - Very low Iq for a regulator (25uA at idle, assuming Vb > Vo; only 400uA or so at full current)
+ - OPTION 2: Current Limiter: [MCP380SNT](https://www.onsemi.com/pdf/datasheet/ncp380-d.pdf)
+     - Designed as a USB input current limiter, also works for LiPo cell voltage range
+     - 800mA limiting, short circuit protection
+     - Provides the similar current limiting capability as the TLV75801 with minimal additional quiescent current; allows retaining this function/protection in case of an unregulated option.
  - Output protection diode: [MAX40203](https://www.analog.com/media/en/technical-documentation/data-sheets/MAX40203.pdf)
      - Low voltage drop (~40mV) ideal diode
      - Low leakage and low Iq (<0.5uA)
@@ -56,7 +60,8 @@ This has been inspired by the below reference projects:
 ## Function Description
 ![Block diagram of battery](https://github.com/calcpsu/cphp82001/blob/master/docs/schematic.png?raw=true)
 ### Discharging, calculator on:
- - B+ supplies regulator, which regulates to 3.8V
+ - OPTION 1: B+ supplies regulator, which regulates to 3.8V
+ - OPTION 2: B+ supplies cell voltage via current limiting IC
  - Output delivered to calculator via ideal diode U3
  - Vout at 3.8V is below threshold for U4 (4.4V), Q2 is off and VCC is 0V (charging IC shutdown completely)
 ### Charging, USB:
