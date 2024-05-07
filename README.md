@@ -77,24 +77,24 @@ This has been inspired by the below reference projects:
     - U1 begins charge cycle, eventually delivering ~48mA to battery.
     - On charge termination, VCC current is minimal (10's of uA), all 50mA will be running through D2 (~0.25W power; using biggest one I can fit to keep temperature down)
  - HP35/45/55 calculators do not draw current when on - supplied separately by HP AC adapter, the calculator supply is physically disconnected from the charging circuit.
- - HP65/67 with card reader: card reader may draw from battery supply. In this case, the CC supply voltage will drop until U4 shuts off current to the charge circuit, resetting the charge cycle. When voltage drops below Vreg, U3 activates, and card reader is powered from regulator (3.78V). As the AC adapter is not sufficient to run the card reader, this is the least worst outcome available.
+ - HP65/67 with card reader: card reader may draw from battery supply. In this case, the CC supply voltage will drop until U4 shuts off current to the charge circuit, resetting the charge cycle. When voltage drops below Vreg, U3 activates, and card reader is powered from regulator (3.78V) or current limiter (B+). As the AC adapter is not sufficient to run the card reader, this is the least worst outcome available.
 ### Battery Exhausted:
- - HP35 shows low battery (decimal points) indication at V+ of 3.50V
+ - HP35 shows low battery (decimal points) indication at V+ of 3.50V.
    - This represents about 6-7% charge state of LiPo
    - User may switch off and recharge now...
+ - HP67 will show indicator at about 3.60V; similar to above but a little more margin.
  - HP35 will cease to function at ~3.25V, still draws ~75mA
    - User probably should switch off and recharge now...
- - U4 protects battery at VB+ = 3.1V, by disabling the regulator. Iq should be ~10uA.
-   - This is really the lowest you want a lipo going. Low Iq will mean it stays at this state of charge for a long time.
+ - U4 protects battery at VB+ = 3.1V, by disabling the regulator or current limiting IC. Iq should be ~10uA.
  - If left for a _really_ long time, VB+ may reduce to 2.5V, which should trigger battery pack protection circuit and fully disconnect the battery. Plugging in (turning on charge controller, which will do a battery detection routine and reset the protection circuit) will reset.
 
 ## Notes on optimisation:
 
-Addition of a series regulator is not an immediately obvious means to maximise efficiency. I've measured the HP-35 increases current consumption as voltage rises (this is most likely a result of the way the LEDs are driven with fixed-duty inductive energy, this appears as brighter leds). Even accounting for the linear loss and Iq of the regulator circuit, total power consumption decreases as the regulator voltage decreases (down to about 3.6V, the minimum to operate the calculator reliably). The newer models (HP-45, HP-67) do the opposite - the current drops as the voltage increases, I believe there must be some kind of improved more efficient power supply arrangement. The HP-67 has a card reader with a motor; this draws around 400mA when reading/writing a card. To allow for a little drop in the system, the regulator voltage needs to be a touch higher (looks like about 3.8V works consistently).
+Addition of a series regulator is not an immediately obvious means to maximise efficiency. I've measured the HP-35 increases current consumption as voltage rises (this is most likely a result of the way the LEDs are driven with fixed-duty inductive energy, this appears as brighter leds). Even accounting for the linear loss and Iq of the regulator circuit, total power consumption decreases as the regulator voltage decreases (down to about 3.6V, the minimum to operate the calculator reliably). The newer models (HP-45, HP-67) do the opposite - the current drops as the voltage increases, which indicates a more typical profile for a switchmode converter. The HP-67 has a card reader with a motor; this draws around 400mA when reading/writing a card, direct from battery. To allow for a little drop in the system, the regulator voltage needs to be a touch higher (looks like about 3.8V works consistently).
 
 ### Why not a switching regulator?
 
-In theory, replacing the series linear regulator with a switching regulator may allow use of the battery capacity right down to 3.0V, and more efficiently use the currently wasted energy of the full battery (VB+ > 3.63V) currently being dissipated by the linear reg.
+In theory, replacing the series linear regulator with a switching regulator may allow use of the battery capacity right down to 3.1V, and more efficiently use the currently wasted energy of the full battery (VB+ > 3.78V) currently being dissipated by the linear reg.
 
 I've investigated using a MIC2250 step-up regulator, which has a surprisingly low Iq (55uA, not switching), and could provide a consistent output voltage right down to the end of the battery capacity (Vb=3.0V). At the currents needed, this can be around 87% efficient. This would provide a consistent voltage right up until shutdown. While this might be good particularly for the HP-67 card reader, it has the disadvantage of skipping the calculator's built-in low battery indication - the power supply unit would completely shutdown without any warning with a low battery.
 
@@ -106,10 +106,11 @@ I've done a simulation of the 3 options:
   2. Linear regulator (TLV75801, set to 3.80V)
   3. Switchmode step-up regulator (MIC2250, set to 3.80V also)
 
-For each, the model calculates the change in output voltages given the battery state, calculator and power supply current draw, and iterates until the 2000mAh battery is exhausted. The calculator load is measured from 3 sample calculators, reflecting the calculator being left on in the default display ("0." or "0.00" depending on the model), and accounts for the changing current with changing supply voltage. Results are shown below.
+For each, the model calculates the change in output voltages given the battery state, calculator and power supply current draw, and iterates until the battery (2000mAh) is exhausted. The calculator load is measured from 3 sample calculators (HP-35, HP-45 and HP-67), reflecting the calculator being left on in the default display ("0." or "0.00" depending on the model), and accounts for the changing current with changing supply voltage. Results are shown below.
 
-In summary, a regulated design gains a slight advantage in run time for the HP-35, while slightly reducing run time for HP-45 and HP-67. The switchmode design is actually best for the current-hungry HP-67, but not by a significant amount, and at the cost of higher quiescent current (shortening standby time).
-Given the linear regulator provides some additional advantages for all the calculators (including a level of overcurrent / short-circuit protection which would need to be replaced, the function of the calculator's low battery signal is retained, and a constant voltage for the HP-67 card reader), the penalty in run time (and shelf time) I think is justified and the linear regulator is the optimum solution.
+In summary, a regulated design gains a slight advantage in run time for the HP-35, while slightly reducing run time for HP-45 and HP-67. The switchmode design is actually best for the current-hungry HP-67, but not by a significant amount, and at the cost of higher quiescent current (shortening standby time significantly).
+
+In conclusion, the regulated design provides a slight advantage for the HP-35 based on this model, however the unregulated design (with addition of necessary output short-circuit protection / current limiter) can be expected to be ideal for other models. Further testing of a prototype is still required, as the impact of the regulator's increased quiescent current in dropout mode has not been fully characterised in this model (and may even negate the benefit, particularly in standby performance). v3.5 of the PCB design includes both regulator and current limiter, and allows bypassing with a 0-ohm resistor for a beta production release.
 
 #### Results summary (t in hours)
 ![Image of power model results](https://github.com/calcpsu/cphp82001/blob/master/powermodel/modelresults.png?raw=true)
@@ -119,7 +120,6 @@ Given the linear regulator provides some additional advantages for all the calcu
 ![Image of power model results](https://github.com/calcpsu/cphp82001/blob/master/powermodel/results_hp45.png?raw=true)
 #### HP-67
 ![Image of power model results](https://github.com/calcpsu/cphp82001/blob/master/powermodel/results_hp67.png?raw=true)
-
 
 ## License
 
