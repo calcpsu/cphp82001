@@ -6,7 +6,7 @@ Li-Po has the advantage of far reduced self-discharge in comparison to Ni-MH, wh
 
 Ni-MH / Ni-CD batteries are notorious for leaking. While Lithium Ion batteries are notorious for self-immolation, a well protected Li-Po battery (particularly in a low current application like this) should be able to be made very safe.
 
-![Render of calcpack PCB](https://github.com/calcpsu/cphp82001/blob/master/docs/cphp82001-pcb_render.png?raw=true)
+![Render of calcpack PCB](docs/cphp82001-pcb_render.png)
 
 ## Features / design goals:
 - Fit into existing compartment with no modifications
@@ -113,13 +113,19 @@ In summary, a regulated design gains a slight advantage in run time for the HP-3
 In conclusion, the regulated design provides a slight advantage for the HP-35 based on this model, however the unregulated design (with addition of necessary output short-circuit protection / current limiter) can be expected to be ideal for other models. Further testing of a prototype is still required, as the impact of the regulator's increased quiescent current in dropout mode has not been fully characterised in this model (and may even negate the benefit, particularly in standby performance). v3.5 of the PCB design includes both regulator and current limiter, and allows bypassing with a 0-ohm resistor for a beta production release.
 
 #### Results summary (t in hours)
-![Image of power model results](https://github.com/calcpsu/cphp82001/blob/master/powermodel/modelresults.png?raw=true)
+![Image of power model results](powermodel/modelresults.png)
 #### HP-35
-![Image of power model results](https://github.com/calcpsu/cphp82001/blob/master/powermodel/results_hp35.png?raw=true)
+![Image of power model results](powermodel/results_hp35.png)
 #### HP-45
-![Image of power model results](https://github.com/calcpsu/cphp82001/blob/master/powermodel/results_hp45.png?raw=true)
+![Image of power model results](powermodel/results_hp45.png)
 #### HP-67
-![Image of power model results](https://github.com/calcpsu/cphp82001/blob/master/powermodel/results_hp67.png?raw=true)
+![Image of power model results](powermodel/results_hp67.png)
+
+## Community Builds ##
+Built one? Send me some pics and I'll share here!
+### Milo van der Zee ###
+<img src="https://github.com/calcpsu/cphp82001/blob/fe75dc4d11e5f6425de9f2a2bb4d9ceb920f7c62/docs/milo_open.JPG" alt="Photo of build by Milo van der Zee" width=50% height=50%>
+
 
 ## License
 
