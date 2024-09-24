@@ -3753,6 +3753,16 @@
 		)
 		(uuid "19dc8bb2-434f-4603-a7f5-1c693e6b2550")
 	)
+	(polyline
+		(pts
+			(xy 89.535 109.855) (xy 106.68 100.33)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "19dd48a9-aac9-48a8-bff4-c4ff26c8261e")
+	)
 	(wire
 		(pts
 			(xy 67.31 146.685) (xy 67.31 154.305)
@@ -4333,6 +4343,16 @@
 		)
 		(uuid "931157bf-dc21-41f1-a2c2-9aadc875521d")
 	)
+	(polyline
+		(pts
+			(xy 140.97 122.555) (xy 153.035 93.345)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "94fa89d9-b290-4982-800f-c2c56f58c6de")
+	)
 	(wire
 		(pts
 			(xy 67.31 125.095) (xy 67.31 130.175)
@@ -4503,6 +4523,16 @@
 		)
 		(uuid "ba8330e9-84f5-497e-b85f-cadd2314e150")
 	)
+	(polyline
+		(pts
+			(xy 91.44 134.62) (xy 140.97 122.555)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "bd9a73fa-bcb2-47b7-b604-20dd15399112")
+	)
 	(wire
 		(pts
 			(xy 182.88 68.58) (xy 182.88 71.12)
@@ -4603,6 +4633,16 @@
 		)
 		(uuid "deac38b8-f1fe-4009-b0cb-c84055065f5d")
 	)
+	(polyline
+		(pts
+			(xy 146.05 122.555) (xy 140.97 122.555)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "df03bf27-f226-4e47-9345-8319f620ba25")
+	)
 	(wire
 		(pts
 			(xy 227.33 68.58) (xy 232.41 68.58)
@@ -4683,6 +4723,16 @@
 		)
 		(uuid "ef3d2d2e-711f-4ae2-b420-41fdce0d5cd0")
 	)
+	(polyline
+		(pts
+			(xy 94.615 109.855) (xy 89.535 109.855)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "eff9a6de-b4ac-4e25-bfcc-65d1062f9494")
+	)
 	(wire
 		(pts
 			(xy 34.29 59.055) (xy 34.29 75.565)
@@ -4742,6 +4792,54 @@
 			(type default)
 		)
 		(uuid "f89ef597-89b6-44de-bcec-3d262fb997a4")
+	)
+	(circle
+		(center 215.9 130.81)
+		(radius 16.0267)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 27934b7f-a243-4028-8450-004999a27f22)
+	)
+	(circle
+		(center 89.535 137.795)
+		(radius 3.81)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 337f950d-0724-474a-b41b-fae488ebb101)
+	)
+	(circle
+		(center 153.035 88.9)
+		(radius 4.836)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid 72f82aaf-13c7-460b-9539-53c40a44d53c)
+	)
+	(circle
+		(center 113.665 87.63)
+		(radius 14.3964)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(fill
+			(type none)
+		)
+		(uuid e0007040-f9e8-4a88-8691-9541eaa45407)
 	)
 	(image
 		(at 180.975 170.815)
@@ -5288,12 +5386,12 @@
 		)
 		(uuid "072244d4-69ec-433f-865b-34ba579b78b2")
 	)
-	(text "I_USB: 300mA\nI_HP: 48mA"
+	(text "NOTE:\nISET/PROG sets charge current, refer to BQ21040 datasheet\nR_PROG for USB = R1 (R8 is shorted by Q1) (1k8 --> 300mA)\nR_PROG for charging in calculator = R1+R8 (12k8 --> 48mA)"
 		(exclude_from_sim no)
-		(at 149.225 66.675 0)
+		(at 95.25 114.3 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.8 0.8)
 			)
 			(justify left bottom)
 		)
@@ -5320,17 +5418,6 @@
 			(justify left bottom)
 		)
 		(uuid "1df74be1-d650-46f3-b0bb-9b76084c6c05")
-	)
-	(text "Iq=25uA\n<400uA when on"
-		(exclude_from_sim no)
-		(at 163.195 99.06 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "1e4a5675-ee13-4bc7-97f2-9085b44e9118")
 	)
 	(text "3.1V trigger / 240ms timeout"
 		(exclude_from_sim no)
@@ -5376,38 +5463,27 @@
 		)
 		(uuid "42285b00-9b8d-4e14-b6d7-788aa44c44c8")
 	)
-	(text "5uA"
+	(text "NOTE:\nFor regulated output:\n* Populate U2 TLV75801\n* Omit U7\n* Short JP2 NOLLIM\nFor unregulated output:\n* Omit U2\n* Populate U7 NCP380\n* Short JP1 NOREG\n\n"
 		(exclude_from_sim no)
-		(at 274.32 89.535 90)
+		(at 233.045 122.555 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.8 0.8)
 			)
-			(justify left bottom)
+			(justify left)
 		)
-		(uuid "4aaffbf2-a69f-4322-949b-011fa48d8649")
+		(uuid "49ffcd36-cb84-40eb-bc3d-224befc09bfd")
 	)
-	(text "5.5uA"
+	(text "NOTE:\nU1 TS is for battery NTC temperature sensor; 10k to GND\n* If battery has a temperature sensor, omit R13\n* If battery does not have a temperature sensor, populate R13 10k\n"
 		(exclude_from_sim no)
-		(at 182.245 100.838 90)
+		(at 146.685 124.46 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.8 0.8)
 			)
-			(justify left bottom)
+			(justify left)
 		)
-		(uuid "77d9f16b-13c0-443b-8a03-c8936316a0d7")
-	)
-	(text "125uA (STBY, Vb<Vin)"
-		(exclude_from_sim no)
-		(at 124.46 99.695 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "7d5219bf-c014-4546-a2c6-db8e8fa6e821")
+		(uuid "7686eb2c-ff72-4d10-9cec-740034a2d74a")
 	)
 	(text "4.4V trigger / 240ms timeout"
 		(exclude_from_sim no)
@@ -5419,17 +5495,6 @@
 			(justify left bottom)
 		)
 		(uuid "81d882c3-1ef6-472d-b3db-bea61d034ffe")
-	)
-	(text "5.0V (usb)\n100mV (battery)"
-		(exclude_from_sim no)
-		(at 89.535 89.535 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "95611b10-bee5-4644-b554-708729867652")
 	)
 	(text "RATED: 5.0V/400mA\nEN38.3 T.7: 10V/800mA"
 		(exclude_from_sim no)
@@ -5453,28 +5518,6 @@
 		)
 		(uuid "a30334bc-d905-433d-84bb-f5cfbc0e0848")
 	)
-	(text "Iq=0.5uA"
-		(exclude_from_sim no)
-		(at 214.757 88.138 90)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "c6bc93bd-3dc3-44d1-97c3-a2abe66854b1")
-	)
-	(text "40V 1A\nVr ~ 3uA @ 5V/25C\nVf 0.4V"
-		(exclude_from_sim no)
-		(at 67.945 50.8 0)
-		(effects
-			(font
-				(size 1.27 1.27)
-			)
-			(justify left bottom)
-		)
-		(uuid "e91ff9f8-58b0-4b48-b17a-508f8f2d9c87")
-	)
 	(text "Iq=5uA"
 		(exclude_from_sim no)
 		(at 67.31 155.575 90)
@@ -5486,12 +5529,12 @@
 		)
 		(uuid "f6295c38-9a3b-4ba5-b5ef-c3e684611f85")
 	)
-	(text "REV1 ADD Q1,R8,R9\n\nREV1.1 U2=TPS73101, U4=S-8261ABJMD, R4=300k, R5=160k, update notes\n\nREV1.2 change D1 to 1N5817, change D2 to 5V6, R8=24k, Add C6\n\nREV2 BOARD LAYOUT CHANGE\n\nREV3 ADD U6, C6, F1. change U4 to TPS3808 (+C4,R6,R7,R10,R11), change U1 to BQ21040, add Q2,D7,R13, move C2, add C7, new name\n\nREV 3.1 remove F1, change R5 to 95.3k\n\nREV 3.2 change U5 to APX\n\nREV 3.3 Add U4,Q2 for active backfeed\n\nREV 3.4 Change R1 to 1k8, R8 to 11k, C7 to 10u\n\nREV 3.5 Add U7, C4, JP1, JP2, move U4 pin3 to VOUTF, del C2\n\nREV 4.0 JP1 B+ to VREG. Layout changes."
+	(text "CHANGE HISTORY:\n\nREV1 ADD Q1,R8,R9\n\nREV1.1 U2=TPS73101, U4=S-8261ABJMD, R4=300k, R5=160k, update notes\n\nREV1.2 change D1 to 1N5817, change D2 to 5V6, R8=24k, Add C6\n\nREV2 BOARD LAYOUT CHANGE\n\nREV3 ADD U6, C6, F1. change U4 to TPS3808 (+C4,R6,R7,R10,R11), change U1 to BQ21040, add Q2,D7,R13, move C2, add C7, new name\n\nREV 3.1 remove F1, change R5 to 95.3k\n\nREV 3.2 change U5 to APX\n\nREV 3.3 Add U4,Q2 for active backfeed\n\nREV 3.4 Change R1 to 1k8, R8 to 11k, C7 to 10u\n\nREV 3.5 Add U7, C4, JP1, JP2, move U4 pin3 to VOUTF, del C2\n\nREV 4.0 JP1 B+ to VREG. Layout changes."
 		(exclude_from_sim no)
 		(at 17.78 194.31 0)
 		(effects
 			(font
-				(size 1.27 1.27)
+				(size 0.8 0.8)
 			)
 			(justify left bottom)
 		)
