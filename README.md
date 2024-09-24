@@ -88,6 +88,17 @@ This has been inspired by the below reference projects:
  - U4 protects battery at VB+ = 3.1V, by disabling the regulator or current limiting IC. Iq should be ~10uA.
  - If left for a _really_ long time, VB+ may reduce to 2.5V, which should trigger battery pack protection circuit and fully disconnect the battery. Plugging in (turning on charge controller, which will do a battery detection routine and reset the protection circuit) will reset.
 
+## Assembly Notes ##
+
+Refer to the schematic for details. The following notes are worth considering if building your own:
+* The design allows either regulated or unregulated option.
+  - For regulated (best for HP35), U2 regulator provides regulation and current limiting - U7 is not required and can be omitted and bypassed.
+  - For unregulated (best for all later types), U2 is omitted and bypassed, and U7 is added to provide current limiting
+* A 3-pin JST-SH (1.0mm pitch) connector is used for the battery. 1=pos, 2=temp, 3=neg
+  - If you don't have a temperature sensor in the battery, simply do not connect to pin 2. Add R13=10k to enable 10-hour charging timeout, or omit to disable 10-hour charging timeout. If you have a temperature sensor in the battery (white wire), then omit R13.
+  - If you prefer not to use a connector, two solder pads are provided to solder 2 battery wires directly (these double as JST-SH mechanical pads).
+* Two case designs are provided, one with and one without an LED hole. If you 3D print with a transluscent material, the hole is not needed!
+
 ## Notes on optimisation:
 
 Addition of a series regulator is not an immediately obvious means to maximise efficiency. I've measured the HP-35 increases current consumption as voltage rises (this is most likely a result of the way the LEDs are driven with fixed-duty inductive energy, this appears as brighter leds). Even accounting for the linear loss and Iq of the regulator circuit, total power consumption decreases as the regulator voltage decreases (down to about 3.6V, the minimum to operate the calculator reliably). The newer models (HP-45, HP-67) do the opposite - the current drops as the voltage increases, which indicates a more typical profile for a switchmode converter. The HP-67 has a card reader with a motor; this draws around 400mA when reading/writing a card, direct from battery. To allow for a little drop in the system, the regulator voltage needs to be a touch higher (looks like about 3.8V works consistently).
