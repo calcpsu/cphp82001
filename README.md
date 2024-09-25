@@ -72,10 +72,10 @@ This has been inspired by the below reference projects:
 ### Charging, HP charger:
  - HP charger supplies 50mA constant current, up to 16V (!!). With the original NiCads, these acted as a voltage clamp (float charge about 1.43V/cell = 4.3V) - we need to replace this function.
     - With no charging current, voltage Vout rises until U3 switches off.
-    - Will continue to rise until clamped by D2 (this should be low enough to protect HP65/67 sense chip from harm with extended application, but too low will result in excessive Iq at the normal regulator voltage). 4.3V is definitely OK, 6.25V might be survivable (as this is Vss normally), but further experimentation is required. I suspect either 4.7 or 5.1V will be OK.
+    - Will continue to rise until clamped by D2 (this should be low enough to protect HP65/67 sense chip from harm with extended application, but too low will result in excessive Iq at the normal regulator voltage). 4.3V is definitely OK, 6.25V might be survivable (as this is Vss normally). I have tested with 5.6V, and seen no negative impact on any of my calculators, including with extended time on charge. As zener reverse current is appreciable close to the zener voltage, to minimise quiescent current using the highest safe zener voltage is ideal.
     - Exceeding 4.4V for 240ms, U4 activates and connects Vout to Vcc via Q2
     - U1 begins charge cycle, eventually delivering ~48mA to battery.
-    - On charge termination, VCC current is minimal (10's of uA), all 50mA will be running through D2 (~0.25W power; using biggest one I can fit to keep temperature down)
+    - On charge termination, VCC current is minimal (10's of uA), all 50mA will be running through D2 (~0.25W power; using biggest one I can fit to keep temperature down). Voltage will be at the zener voltage (5.6V).
  - HP35/45/55 calculators do not draw current when on - supplied separately by HP AC adapter, the calculator supply is physically disconnected from the charging circuit.
  - HP65/67 with card reader: card reader may draw from battery supply. In this case, the CC supply voltage will drop until U4 shuts off current to the charge circuit, resetting the charge cycle. When voltage drops below Vreg, U3 activates, and card reader is powered from regulator (3.78V) or current limiter (B+). As the AC adapter is not sufficient to run the card reader, this is the least worst outcome available.
 ### Battery Exhausted:
