@@ -95,14 +95,13 @@ Refer to the schematic for details. The following notes are worth considering if
   - For regulated (best for HP35), U2 regulator provides regulation and current limiting - U7 is not required and can be omitted and bypassed.
   - For unregulated (best for all later types), U2 is omitted and bypassed, and U7 is added to provide current limiting
 * A 3-pin JST-SH (1.0mm pitch) connector is used for the battery. 1=pos, 2=temp, 3=neg
-  - R13 is in parallel with TS pin NTC thermistor. There are 3 choices for R13, depending on how you wish the charging to function and whether you have a battery with a temperature sensor or not.
-  - If in doubt, I recommend installing R13=220k, to ensure charge termination occurs under all scenarios (safest and best for battery longevity).
+  - R13 is in parallel with TS pin NTC thermistor. If the battery does not a provide NTC thermistor (white wire, 3 pin connector), leave pin2 open and install R13=10k.
+  - Note datasheet indicates 237k resistor prevents timer disable mode, but this also prevents charging without thermistor
     
-| R13 | Battery With Temperature Sensor | Battery Without Temperature Sensor | Recommended |
-| --- | --- | --- | :-: |
-| Omit | 🟢 10% Current Charge Termination <br> 🟢 10h Charge Timeout | 🔴 10% Current Charge Termination <br> 🔴 10h Charge Timeout | |
-| 10k  | ⚠️ Will not charge  | 🟢 10% Current Charge Termination <br> 🟢  charge timeout | |
-| 220k | 🟢 10% Current Charge Termination <br> 🟢 10h Charge Timeout <br> 🟠 Temperature error (~4%) | 🟢 10% Current Charge Termination <br> 🟢 10h Charge Timeout | ✔️ |
+| R13 | Battery With Temperature Sensor | Battery Without Temperature Sensor |
+| --- | --- | --- |
+| Omit | 🟢 10% Current Charge Termination <br> 🟢 10h Charge Timeout | 🔴 10% Current Charge Termination <br> 🔴 10h Charge Timeout |
+| 10k  | ⚠️ Will not charge  | 🟢 10% Current Charge Termination <br> 🟢  charge timeout |
 
 * Two case designs are provided, one with and one without an LED hole. If you 3D print with a transluscent material, the hole is not needed!
 

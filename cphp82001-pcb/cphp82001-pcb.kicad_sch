@@ -5474,7 +5474,7 @@
 		)
 		(uuid "49ffcd36-cb84-40eb-bc3d-224befc09bfd")
 	)
-	(text "NOTE:\nU1 TS is for battery NTC temperature sensor\n* If battery has a temperature sensor, you can add R13=220k, or omit R13.\n   - R13=220k will introduce a small temperature error, but see below.\n* If battery does not have a temperature sensor, add R13=220k\n   - If omitted, charge termination (10% current and 10h timer) will be disabled\n"
+	(text "NOTE:\nU1 TS is for battery NTC temperature sensor\n* If battery has a temperature sensor, you should omit R13.\n* If battery does not have a temperature sensor, add R13=10k\n   - If omitted, charge termination (10% current and 10h timer) will be disabled\n"
 		(exclude_from_sim no)
 		(at 146.685 124.46 0)
 		(effects
@@ -6531,7 +6531,7 @@
 				(justify right)
 			)
 		)
-		(property "Value" "220k"
+		(property "Value" "10k"
 			(at 152.4 90.1699 0)
 			(effects
 				(font
