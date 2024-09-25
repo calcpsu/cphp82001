@@ -101,7 +101,7 @@ Refer to the schematic for details. The following notes are worth considering if
 | R13 | Battery With Temperature Sensor | Battery Without Temperature Sensor |
 | --- | --- | --- |
 | Omit | 🟢 10% Current Charge Termination <br> 🟢 10h Charge Timeout | 🔴 10% Current Charge Termination <br> 🔴 10h Charge Timeout |
-| 10k  | ⚠️ Will not charge T>25C, will charge T<0C  | 🟢 10% Current Charge Termination <br> 🟢  charge timeout |
+| 10k  | ⚠️ Will not charge T>25C <br> ⚠️ Will charge T<0C  | 🟢 10% Current Charge Termination <br> 🟢  charge timeout |
 
 * Two case designs are provided, one with and one without an LED hole. If you 3D print with a transluscent material, the hole is not needed!
 
