@@ -95,8 +95,15 @@ Refer to the schematic for details. The following notes are worth considering if
   - For regulated (best for HP35), U2 regulator provides regulation and current limiting - U7 is not required and can be omitted and bypassed.
   - For unregulated (best for all later types), U2 is omitted and bypassed, and U7 is added to provide current limiting
 * A 3-pin JST-SH (1.0mm pitch) connector is used for the battery. 1=pos, 2=temp, 3=neg
-  - If you don't have a temperature sensor in the battery, simply do not connect to pin 2. Add R13=10k to enable 10-hour charging timeout, or omit to disable 10-hour charging timeout. If you have a temperature sensor in the battery (white wire), then omit R13.
-  - If you prefer not to use a connector, two solder pads are provided to solder 2 battery wires directly (these double as JST-SH mechanical pads).
+  - R13 is in parallel with TS pin NTC thermistor. There are 3 choices for R13, depending on how you wish the charging to function and whether you have a battery with a temperature sensor or not.
+  - If in doubt, I recommend installing R13=220k, to ensure charge termination occurs under all scenarios (safest and best for battery longevity).
+    
+| R13 | Battery With Temperature Sensor | Battery Without Temperature Sensor | Recommended |
+| --- | --- | --- | :-: |
+| Omit | 🟢 10% Current Charge Termination <br> 🟢 10h Charge Timeout | 🔴 10% Current Charge Termination <br> 🔴 10h Charge Timeout | |
+| 10k  | ⚠️ Will not charge  | 🟢 10% Current Charge Termination <br> 🟢  charge timeout | |
+| 220k | 🟢 10% Current Charge Termination <br> 🟢 10h Charge Timeout <br> 🟠 Temperature error (~4%) | 🟢 10% Current Charge Termination <br> 🟢 10h Charge Timeout | ✔️ |
+
 * Two case designs are provided, one with and one without an LED hole. If you 3D print with a transluscent material, the hole is not needed!
 
 ## Notes on optimisation:
