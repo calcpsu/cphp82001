@@ -141,7 +141,7 @@ In conclusion, the regulated design provides a slight advantage for the HP-35 ba
 
 ## Community Builds ##
 Built one? Send me some pics and I'll share here!
-### Milo van der Zee ###
+### [Milo van der Zee](https://github.com/MilovdZee) ###
 <img src="https://github.com/calcpsu/cphp82001/blob/fe75dc4d11e5f6425de9f2a2bb4d9ceb920f7c62/docs/milo_open.JPG" alt="Photo of build by Milo van der Zee" width=50% height=50%>
 
 
