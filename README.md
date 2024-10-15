@@ -42,6 +42,7 @@ This has been inspired by the below reference projects:
      - Ultra low dropout (~30mV)
      - 500mA current limited (enough for HP67 card read/write at ~400mA for a few seconds)
      - Very low Iq for a regulator (25uA at idle, assuming Vb > Vo; only 400uA or so at full current)
+     - Note: option eliminated as of REV5; if you're really keen for a regulated version please to check out rev4.
  - OPTION 2: Current Limiter: [MCP380SNT](https://www.onsemi.com/pdf/datasheet/ncp380-d.pdf)
      - Designed as a USB input current limiter, also works for LiPo cell voltage range
      - 800mA limiting, short circuit protection
@@ -60,8 +61,7 @@ This has been inspired by the below reference projects:
 ## Function Description
 ![Block diagram of battery](https://github.com/calcpsu/cphp82001/blob/master/docs/schematic.png?raw=true)
 ### Discharging, calculator on:
- - OPTION 1: B+ supplies regulator, which regulates to 3.8V
- - OPTION 2: B+ supplies cell voltage via current limiting IC
+ - B+ supplies cell voltage via current limiting IC
  - Output delivered to calculator via ideal diode U3
  - Vout at 3.8V is below threshold for U4 (4.4V), Q2 is off and VCC is 0V (charging IC shutdown completely)
 ### Charging, USB:
@@ -72,12 +72,13 @@ This has been inspired by the below reference projects:
 ### Charging, HP charger:
  - HP charger supplies 50mA constant current, up to 16V (!!). With the original NiCads, these acted as a voltage clamp (float charge about 1.43V/cell = 4.3V) - we need to replace this function.
     - With no charging current, voltage Vout rises until U3 switches off.
-    - Will continue to rise until clamped by D2 (this should be low enough to protect HP65/67 sense chip from harm with extended application, but too low will result in excessive Iq at the normal regulator voltage). 4.3V is definitely OK, 6.25V might be survivable (as this is Vss normally). I have tested with 5.6V, and seen no negative impact on any of my calculators, including with extended time on charge. As zener reverse current is appreciable close to the zener voltage, to minimise quiescent current using the highest safe zener voltage is ideal.
-    - Exceeding 4.4V for 240ms, U4 activates and connects Vout to Vcc via Q2
-    - U1 begins charge cycle, eventually delivering ~48mA to battery.
+    - Will continue to rise until clamped by D2 (this should be low enough to protect HP65/67 sense chip from harm with extended application, but too low will result in excessive Iq as the voltage nears the zener's knee). Reviewing available documents, 4.3V is definitely OK, 6.25V might be survivable (as this is Vss normally). I have tested with 5.6V zener, and this has shown no negative impact to any calculators (particualrly the HP-67, where the sense chip sees this voltage, albeit when off).
+    - Exceeding 4.4V for 240ms, U4 activates and connects Vout to Vcc via Q2 and D4.
+    - D4 ensures that U1 throttles current (Vcc below 4.3V) before U4 cuts off supply (VOUTF 4.4V), maximising utilisation of limited constant current supply. See further explanation in [issue #5](https://github.com/calcpsu/cphp82001/issues/5).
+    - U1 begins charge cycle, delivering up to 50mA to battery.
     - On charge termination, VCC current is minimal (10's of uA), all 50mA will be running through D2 (~0.25W power; using biggest one I can fit to keep temperature down). Voltage will be at the zener voltage (5.6V).
  - HP35/45/55 calculators do not draw current when on - supplied separately by HP AC adapter, the calculator supply is physically disconnected from the charging circuit.
- - HP65/67 with card reader: card reader may draw from battery supply. In this case, the CC supply voltage will drop until U4 shuts off current to the charge circuit, resetting the charge cycle. When voltage drops below Vreg, U3 activates, and card reader is powered from regulator (3.78V) or current limiter (B+). As the AC adapter is not sufficient to run the card reader, this is the least worst outcome available.
+ - HP65/67 with card reader: card reader may draw from battery supply. The sense chip is connected to the battery continuously, and will see up to the 5.6V float voltage. In case the calculator is operated and this draws current, the CC supply voltage will drop until U4 shuts off current to the charge circuit, resetting the charge cycle. When VOUT drops below B+, U3 activates, and card reader is powered from the current limiter (B+). As the AC adapter is not sufficient to run the card reader, this is the least worst outcome available.
 ### Battery Exhausted:
  - HP35 shows low battery (decimal points) indication at V+ of 3.50V.
    - This represents about 6-7% charge state of LiPo
@@ -127,7 +128,7 @@ For each, the model calculates the change in output voltages given the battery s
 
 In summary, a regulated design gains a slight advantage in run time for the HP-35, while slightly reducing run time for HP-45 and HP-67. The switchmode design is actually best for the current-hungry HP-67, but not by a significant amount, and at the cost of higher quiescent current (shortening standby time significantly).
 
-In conclusion, the regulated design provides a slight advantage for the HP-35 based on this model, however the unregulated design (with addition of necessary output short-circuit protection / current limiter) can be expected to be ideal for other models. Further testing of a prototype is still required, as the impact of the regulator's increased quiescent current in dropout mode has not been fully characterised in this model (and may even negate the benefit, particularly in standby performance). v3.5 of the PCB design includes both regulator and current limiter, and allows bypassing with a 0-ohm resistor for a beta production release.
+In conclusion, the regulated design provides a slight advantage for the HP-35 based on this model, however the unregulated design (with addition of necessary output short-circuit protection / current limiter) can be expected to be ideal for other models. Prototype testing with rev 3.5 showed the unregulated design works well in all the calculators, and the regulated design had noticeably faster self-discharge in practice, particularly as the quiescent current is larger than anticipated in dropout mode. As such, further designs have eliminated the regulator in favour of improved board layout and ease of use.
 
 #### Results summary (t in hours)
 ![Image of power model results](powermodel/modelresults.png)
