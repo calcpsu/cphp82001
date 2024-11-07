@@ -104,7 +104,10 @@ Refer to the schematic for details. The following notes are worth considering if
 | Omit | 🟢 10% Current Charge Termination <br> 🟢 10h Charge Timeout | 🔴 10% Current Charge Termination <br> 🔴 10h Charge Timeout |
 | 10k  | ⚠️ Will not charge T>25C <br> ⚠️ Will charge T<0C  | 🟢 10% Current Charge Termination <br> 🟢  charge timeout |
 
-* Two case designs are provided, one with and one without an LED hole. If you 3D print with a transluscent material, the hole is not needed!
+* Two case sizes are provided:
+    * 8mm suits 8mm thick batteries (1500mAh)
+    * 10mm suits 10mm thick batteries (2000mAh), but it has been noted this can be a tight fit in some calculators
+* Variants of each case, with and without an LED hole, are provided. If you 3D print with a transluscent material, the hole is not needed!
 
 ## Notes on optimisation:
 
