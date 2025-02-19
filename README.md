@@ -31,6 +31,8 @@ This has been inspired by the below reference projects:
    - BAD: Unable to charge from HP charger / must remove to charge
 
 ## Key Components
+If you're looking for a full BOM, please check the main files.
+A digikey list is provided here for convenience (no guarantees!): [calcpsu cphp82001](https://www.digikey.com.au/en/mylists/list/Z6K09H5IB0)
  - Battery:
      - 10x34x50mm lipo pouch cell. These also include a DW01A/FS8205 protection circuit.
  - Charge controller: [BQ21040](https://www.ti.com/lit/ds/symlink/bq21040.pdf)
@@ -92,9 +94,10 @@ This has been inspired by the below reference projects:
 ## Assembly Notes ##
 
 Refer to the schematic for details. The following notes are worth considering if building your own:
-* The design allows either regulated or unregulated option.
+* The design up to v4 allows either regulated or unregulated option. From v5, only unregulated is supported (and recommended, see below).
   - For regulated (best for HP35), U2 regulator provides regulation and current limiting - U7 is not required and can be omitted and bypassed.
   - For unregulated (best for all later types), U2 is omitted and bypassed, and U7 is added to provide current limiting
+* Digikey list is [here](https://www.digikey.com.au/en/mylists/list/Z6K09H5IB0)
 * A 3-pin JST-SH (1.0mm pitch) connector is used for the battery. 1=pos, 2=temp, 3=neg
   - R13 is in parallel with TS pin NTC thermistor. If the battery does not a provide NTC thermistor (white wire, 3 pin connector), leave pin2 open and install R13=10k.
   - Note datasheet indicates 237k resistor prevents timer disable mode, but this also prevents charging without thermistor
